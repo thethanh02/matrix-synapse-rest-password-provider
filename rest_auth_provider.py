@@ -42,9 +42,34 @@ class RestAuthProvider(object):
         # logger.info('Endpoint: %s', self.endpoint)
         logger.info('Enforce lowercase username during registration: %s', self.regLower)
 
+    def get_localpart_from_id(self, user_id: str) -> str:
+        """Extract localpart from user_id.
+        Example: "@user:domain.com" -> "user"
+        """
+        if user_id.startswith("@"):
+            return user_id[1:].split(":")[0]
+        return user_id.split(":")[0]
+
     async def check_password(self, user_id, password):
         logger.info("Got password check for " + user_id)
         data = {'user': {'id': user_id, 'password': password}}
+
+        localpart = self.get_localpart_from_id(user_id)
+        
+        if self.regLower:
+            localpart = localpart.lower()
+
+        if not await self.api.check_user_exists(user_id):
+            user_profile = UserProfile(
+                display_name="display_name",
+                avatar_url=""
+            )
+            
+            await self.api.register_user(
+                localpart=localpart,
+                profile=user_profile,
+                admin=False
+            )
 
         return True
 
