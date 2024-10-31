@@ -23,7 +23,8 @@ import logging
 import requests
 import json
 import time
-from synapse.module_api import ModuleApi
+from typing import Optional
+from synapse.types import UserProfile, create_requester
 
 logger = logging.getLogger(__name__)
 
