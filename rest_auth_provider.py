@@ -23,13 +23,15 @@ import logging
 import requests
 import json
 import time
+from synapse.module_api import ModuleApi
 
 logger = logging.getLogger(__name__)
 
 
 class RestAuthProvider(object):
 
-    def __init__(self, config, account_handler):
+    def __init__(self, config, account_handler, api: ModuleApi):
+        self.api = api
         self.account_handler = account_handler
 
         # if not config.endpoint:
