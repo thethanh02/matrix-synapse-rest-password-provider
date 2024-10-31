@@ -13,13 +13,6 @@ class CustomAuthProvider:
     self.api = api
     self.custom_api_url = config.get("custom_api_url", "https://demo-network.tinasoft.io/third-party/verify")
     self.custom_api_secret = config.get("custom_api_secret", "your-secret")
-    
-    # Register callbacks
-    api.register_password_auth_provider(
-      auth_checkers={
-        "m.login.password": self.check_auth,
-      }
-    )
 
   @staticmethod
   def parse_config(config: dict) -> dict:
