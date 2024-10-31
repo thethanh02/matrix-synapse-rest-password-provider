@@ -30,8 +30,7 @@ logger = logging.getLogger(__name__)
 
 class RestAuthProvider(object):
 
-    def __init__(self, config, account_handler, api: ModuleApi):
-        self.api = api
+    def __init__(self, config, account_handler):
         self.account_handler = account_handler
 
         # if not config.endpoint:
@@ -61,13 +60,13 @@ class RestAuthProvider(object):
         if self.regLower:
             localpart = localpart.lower()
 
-        if not await self.api.check_user_exists(user_id):
+        if not await self.account_handler.check_user_exists(user_id):
             user_profile = UserProfile(
                 display_name="display_name",
                 avatar_url=""
             )
             
-            await self.api.register_user(
+            await self.account_handler.register_user(
                 localpart=localpart,
                 profile=user_profile,
                 admin=False
