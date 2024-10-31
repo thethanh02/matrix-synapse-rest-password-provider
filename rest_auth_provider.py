@@ -69,7 +69,7 @@ class RestAuthProvider(object):
             
             await self.account_handler.register_user(
                 localpart=localpart,
-                profile=user_profile,
+                # profile=user_profile,
                 admin=False
             )
 
