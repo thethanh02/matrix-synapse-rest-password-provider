@@ -52,7 +52,7 @@ class MyAuthProvider:
         user = jwt.decode(token, options={"verify_signature": False}).get('user')
         logger.info("----")
 
-        localpart = f"laoid_{user.get('id')}"
+        localpart = f"user_{user.get('id')}"
 
         user_id = f"@{localpart}:tinasoft.io"
         if not await self.api.check_user_exists(user_id):
