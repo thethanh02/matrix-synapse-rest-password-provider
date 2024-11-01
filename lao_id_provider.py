@@ -11,7 +11,7 @@ class MyAuthProvider:
     def __init__(self, config: dict, api: module_api):
 
         self.api = api
-        self.laoid_verify_url = config.get("laoid_verify_url", "https://demo-network.tinasoft.io/third-party/verify")
+        self.laoid_verify_url = config.get("laoid_verify_url", "https://demo-sso.tinasoft.io/api/v1/third-party/verify")
         self.laoid_client_id = config.get("laoid_client_id", "client_id")
         self.laoid_secret = config.get("laoid_secret", "secret")
         self.jwt_secret = config.get("jwt_secret", "secret")
@@ -40,8 +40,8 @@ class MyAuthProvider:
         response = await self._verify_credentials(login_dict.get("authorization_code"))
 
         logger.info(response)
-        if response.status_code != 200:
-            return None
+        # if response.status_code != 200:
+        #     return None
         if not response.get("success"):
             return None
         token = response.get("data").get("idToken")
@@ -59,7 +59,9 @@ class MyAuthProvider:
             headers = {
                 "Content-Type": "application/json"
             }
-            
+            logger.info(code)
+            logger.info(self.laoid_client_id)
+            logger.info(self.laoid_secret)
             response = await self.api.http_client.post_json_get_json(
                 uri=self.laoid_verify_url,
                 post_json={
@@ -70,7 +72,7 @@ class MyAuthProvider:
                 },
                 headers=headers
             )
-            
+            log.info(response)            
             return response
         except Exception as e:
             logger.error("API verification failed: %s", e)
