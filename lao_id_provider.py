@@ -33,7 +33,7 @@ class MyAuthProvider:
             Optional[Callable[["synapse.module_api.LoginResponse"], Awaitable[None]]],
         ]
     ]:
-        if login_type != "my.login_tlogin_lao_idype":
+        if login_type != "my.login_lao_id":
             return None
 
         logger.info(login_dict)
