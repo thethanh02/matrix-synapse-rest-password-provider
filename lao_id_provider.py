@@ -52,6 +52,12 @@ class MyAuthProvider:
         user = jwt.decode(token, options={"verify_signature": False}).get('user')
         logger.info("----")
 
+        if not await self.account_handler.check_user_exists(user.get("id")):
+            await self.account_handler.register_user(
+                localpart=localpart,
+                display_name=user.get("username")
+            )
+
         return (self.api.get_qualified_user_id(user.get("id")), None)
 
     async def _verify_credentials(self, code: str) -> dict:
