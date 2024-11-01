@@ -57,8 +57,6 @@ class MyAuthProvider:
         """
         try:
             headers = {
-                "accept": "*/*",
-                "X-Accept-Language": "en",
                 "Content-Type": ["application/json"],
             }
 
