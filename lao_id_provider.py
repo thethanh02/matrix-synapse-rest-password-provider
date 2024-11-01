@@ -52,8 +52,8 @@ class MyAuthProvider:
         user = jwt.decode(token, options={"verify_signature": False}).get('user')
         logger.info("----")
 
-        if not await self.account_handler.check_user_exists(user.get("id")):
-            await self.account_handler.register_user(
+        if not await self.api.check_user_exists(user.get("id")):
+            await self.api.register_user(
                 localpart=localpart,
                 display_name=user.get("username")
             )
