@@ -40,14 +40,14 @@ class MyAuthProvider:
         response = await self._verify_credentials(login_dict.get("authorization_code"))
 
         logger.info(response)
-        # if response.status_code != 200:
-        #     return None
         if not response.get("success"):
             return None
         token = response.get("data").get("idToken")
 
-        logger.info(token)
+        logger.info("token: %s", token)
+        logger.info("----")
         logger.info(jwt.decode(token, self.jwt_secret, algorithms=["HS256"]))
+        logger.info("----")
 
         return (self.api.get_qualified_user_id(username), None)
 
@@ -70,7 +70,7 @@ class MyAuthProvider:
                 },
                 headers=headers
             )
-            logger.info(response)            
+
             return response
         except Exception as e:
             logger.error("API verification failed: %s", e)
