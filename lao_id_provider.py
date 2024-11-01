@@ -57,11 +57,11 @@ class MyAuthProvider:
         """
         try:
             headers = {
-                "Content-Type": "application/json"
+                "accept": "*/*",
+                "X-Accept-Language": "en",
+                "Content-Type": ["application/json"],
             }
-            logger.info(code)
-            logger.info(self.laoid_client_id)
-            logger.info(self.laoid_secret)
+
             response = await self.api.http_client.post_json_get_json(
                 uri=self.laoid_verify_url,
                 post_json={
