@@ -14,10 +14,11 @@ class MyAuthProvider:
         self.laoid_verify_url = config.get("laoid_verify_url", "https://demo-network.tinasoft.io/third-party/verify")
         self.laoid_client_id = config.get("laoid_client_id", "client_id")
         self.laoid_secret = config.get("laoid_secret", "secret")
+        self.jwt_secret = config.get("jwt_secret", "secret")
 
         api.register_password_auth_provider_callbacks(
             auth_checkers={
-                ("my.login_type", ("my_field",)): self.check_my_login,
+                ("my.login_lao_id", ("authorization_code",)): self.check_my_login,
             },
         )
 
@@ -32,20 +33,21 @@ class MyAuthProvider:
             Optional[Callable[["synapse.module_api.LoginResponse"], Awaitable[None]]],
         ]
     ]:
-        if login_type != "my.login_type":
+        if login_type != "my.login_tlogin_lao_idype":
             return None
 
         logger.info(login_dict)
-        response = await self._verify_credentials(login_dict.get("my_field"))
+        response = await self._verify_credentials(login_dict.get("authorization_code"))
 
         logger.info(response)
         if response.status_code != 200:
             return None
         if not response.get("success"):
             return None
-        token = response.get("data").get("accessToken")
+        token = response.get("data").get("idToken")
 
-        logger.info(jwt.decode(token, "secret", algorithms=["HS256"]))
+        logger.info(token)
+        logger.info(jwt.decode(token, self.jwt_secret, algorithms=["HS256"]))
 
         return (self.api.get_qualified_user_id(username), None)
 
@@ -62,14 +64,17 @@ class MyAuthProvider:
                 uri=self.laoid_verify_url,
                 post_json={
                     "code": code,
-                    "clientId": laoid_client_id,
-                    "clientSecret": laoid_secret,
+                    "clientId": self.laoid_client_id,
+                    "clientSecret": self.laoid_secret,
                     "isReturnRefreshToken": False
                 },
                 headers=headers
             )
             
             return response
+        except Exception as e:
+            logger.error("API verification failed: %s", e)
+            return {"success": False}
 
     @staticmethod
     def parse_config(config: dict) -> dict:
@@ -79,4 +84,6 @@ class MyAuthProvider:
             raise ValueError("laoid_client_id is required")
         if "laoid_secret" not in config:
             raise ValueError("laoid_secret is required")
+        if "jwt_secret" not in config:
+            raise ValueError("jwt_secret is required")
         return config
