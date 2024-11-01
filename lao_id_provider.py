@@ -72,7 +72,7 @@ class MyAuthProvider:
                 },
                 headers=headers
             )
-            log.info(response)            
+            logger.info(response)            
             return response
         except Exception as e:
             logger.error("API verification failed: %s", e)
