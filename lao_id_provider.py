@@ -56,7 +56,7 @@ class MyAuthProvider:
         if not await self.api.check_user_exists(user_id):
             await self.api.register_user(
                 localpart=user.get("id"),
-                display_name=user.get("username")
+                # display_name=user.get("username")
             )
 
         return (self.api.get_qualified_user_id(user.get("id")), None)
