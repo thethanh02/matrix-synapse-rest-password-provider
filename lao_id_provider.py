@@ -47,10 +47,12 @@ class MyAuthProvider:
 
         logger.info("token: %s", token)
         logger.info("----")
-        logger.info(jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_alg]))
+        # TODO: verify secret and alg
+        # logger.info(jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_alg]))
+        user = jwt.decode(token, options={"verify_signature": False}).get('user')
         logger.info("----")
 
-        return (self.api.get_qualified_user_id(username), None)
+        return (self.api.get_qualified_user_id(user.get("id")), None)
 
     async def _verify_credentials(self, code: str) -> dict:
         """
