@@ -15,6 +15,7 @@ class MyAuthProvider:
         self.laoid_client_id = config.get("laoid_client_id", "client_id")
         self.laoid_secret = config.get("laoid_secret", "secret")
         self.jwt_secret = config.get("jwt_secret", "secret")
+        self.jwt_alg = config.get("jwt_alg", "HS512")
 
         api.register_password_auth_provider_callbacks(
             auth_checkers={
@@ -46,7 +47,7 @@ class MyAuthProvider:
 
         logger.info("token: %s", token)
         logger.info("----")
-        logger.info(jwt.decode(token, self.jwt_secret, algorithms=["HS256"]))
+        logger.info(jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_alg]))
         logger.info("----")
 
         return (self.api.get_qualified_user_id(username), None)
