@@ -16,6 +16,7 @@ class MyAuthProvider:
         self.laoid_secret = config.get("laoid_secret", "secret")
         self.jwt_secret = config.get("jwt_secret", "secret")
         self.jwt_alg = config.get("jwt_alg", "HS512")
+        self._sso_handler = api._hs.get_sso_handler()
 
         api.register_password_auth_provider_callbacks(
             auth_checkers={
@@ -56,10 +57,14 @@ class MyAuthProvider:
 
         user_id = f"@{localpart}:tinasoft.io"
         if not await self.api.check_user_exists(user_id):
-            await self.api.register_user(
+            registered_user_id = await self.api.register_user(
                 localpart=localpart,
                 displayname=user.get("username")
             )
+
+            if user.get("avatar"):
+                logger.info("----avatar----")
+                await self._sso_handler.set_avatar(registered_user_id, user.get("avatar"))
 
         return (self.api.get_qualified_user_id(localpart), None)
 
