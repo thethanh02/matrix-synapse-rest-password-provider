@@ -52,6 +52,7 @@ class MyAuthProvider:
         # logger.info("----")
         # logger.info("user: %s", user)
 
+        localpart = f"user_123"
         # localpart = f"user_{user.get('id')}"
         # user_id = f"@{localpart}:{self.api._hs.hostname}"
 
