@@ -40,32 +40,32 @@ class MyAuthProvider:
 
         logger.info("login_dict %s", login_dict)
         # response = await self._verify_credentials(login_dict.get("authorization_code"))
+        response = login_dict.get("authorization_code_response")
 
-        # logger.info("response %s", response)
-        # if not response.get("success"):
-        #     return None
-        # token = response.get("data").get("idToken")
+        logger.info("response %s", response)
+        if not response.get("success"):
+            return None
+        token = response.get("data").get("idToken")
 
-        # # TODO: verify secret and alg
-        # # logger.info(jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_alg]))
-        # user = jwt.decode(token, options={"verify_signature": False}).get('user')
-        # logger.info("----")
-        # logger.info("user: %s", user)
+        # TODO: verify secret and alg
+        # logger.info(jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_alg]))
+        user = jwt.decode(token, options={"verify_signature": False}).get('user')
+        logger.info("----")
+        logger.info("user: %s", user)
 
-        localpart = f"user_123"
-        # localpart = f"user_{user.get('id')}"
-        # user_id = f"@{localpart}:{self.api._hs.hostname}"
+        localpart = f"user_{user.get('id')}"
+        user_id = f"@{localpart}:{self.api._hs.hostname}"
 
-        # if not await self.api.check_user_exists(user_id):
-        #     registered_user_id = await self.api.register_user(
-        #         localpart=localpart,
-        #         displayname=user.get("username")
-        #     )
-        #     logger.info("----registered_user_id---- %s", registered_user_id)
+        if not await self.api.check_user_exists(user_id):
+            registered_user_id = await self.api.register_user(
+                localpart=localpart,
+                displayname=user.get("username")
+            )
+            logger.info("----registered_user_id---- %s", registered_user_id)
 
-        #     if user.get("avatar"):
-        #         logger.info("----avatar----")
-        #         await self._sso_handler.set_avatar(registered_user_id, user.get("avatar"))
+            if user.get("avatar"):
+                logger.info("----avatar----")
+                await self._sso_handler.set_avatar(registered_user_id, user.get("avatar"))
 
         return (self.api.get_qualified_user_id(localpart), None)
 
