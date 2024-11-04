@@ -46,21 +46,21 @@ class MyAuthProvider:
             return None
         token = response.get("data").get("idToken")
 
-        logger.info("token: %s", token)
-        logger.info("----")
         # TODO: verify secret and alg
         # logger.info(jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_alg]))
         user = jwt.decode(token, options={"verify_signature": False}).get('user')
         logger.info("----")
+        logger.info("user: %s", user)
 
         localpart = f"user_{user.get('id')}"
-
         user_id = f"@{localpart}:tinasoft.io"
+
         if not await self.api.check_user_exists(user_id):
             registered_user_id = await self.api.register_user(
                 localpart=localpart,
                 displayname=user.get("username")
             )
+            logger.info("----registered_user_id---- %s", registered_user_id)
 
             if user.get("avatar"):
                 logger.info("----avatar----")
